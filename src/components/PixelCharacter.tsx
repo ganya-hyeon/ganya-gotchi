@@ -238,14 +238,19 @@ export default function PixelCharacter({ level }: { level: number }) {
   useEffect(() => {
     if (isPetting && particleConfigs.length === 0) {
       const generate = setTimeout(() => {
+        let currentDelay = 0;
+        const intervals = [0.05, 0.15, 0.08, 0.2];
+
         setParticleConfigs(Array.from({ length: 12 }).map((_, i) => {
           // 일직선으로 올라가도록 고정된 X 좌표 사용
           const xPos = (Math.random() - 0.5) * 140; 
+          currentDelay += intervals[i % 4]; // 요청하신 불규칙한 타이밍 적용
+          
           return {
             id: i,
             x: xPos,
-            delay: i * 0.15, // 따다닥 등장하는 간격
-            duration: 1.0 + Math.random() * 0.4, // 일정한 속도감 부여
+            delay: currentDelay, 
+            duration: 1.6, // 전체 속도를 늦춤 (기존 1.0~1.4 -> 1.6)
             iconIndex: Math.floor(Math.random() * 5)
           };
         }));
@@ -267,7 +272,35 @@ export default function PixelCharacter({ level }: { level: number }) {
       onPointerUp={() => setPetting(false, 0)}
       onPointerLeave={() => setPetting(false, 0)}
     >
+      {/* Petting Particles (캐릭터 뒤에 렌더링) */}
+      <AnimatePresence>
+        {isPetting && particleConfigs.map((cfg) => (
+            <motion.div 
+               key={cfg.id} 
+               initial={{ opacity: 0, scale: 0, y: 30, x: cfg.x }} 
+               animate={{ 
+                   opacity: [0, 1, 1, 0], 
+                   y: -180, 
+                   x: cfg.x,
+                   scale: [0.5, 1, 1, 0.5],
+               }} 
+               exit={{ opacity: 0, scale: 0 }} 
+               transition={{ 
+                   duration: cfg.duration, 
+                   repeat: Infinity, 
+                   delay: cfg.delay, 
+                   ease: (t: number) => Math.floor(t * 4) / 4 // steps(4) 와 동일한 끊어지는 효과
+               }} 
+               className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center z-0"
+               style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
+            >
+                <img src={SVGS[cfg.iconIndex]} alt="particle" className="w-full h-full object-contain" style={{ imageRendering: 'pixelated' }} />
+            </motion.div>
+        ))}
+      </AnimatePresence>
+
       <motion.div
+        className="relative z-10"
         animate={{ 
             y: [0, -4, 0],
             translateX: waveMotion.tx,
@@ -278,28 +311,6 @@ export default function PixelCharacter({ level }: { level: number }) {
       >
         <canvas ref={canvasRef} width={168} height={168} className="w-42 h-42" style={{ imageRendering: 'pixelated' }} />
       </motion.div>
-      
-      {/* Petting Particles */}
-      <AnimatePresence>
-        {isPetting && particleConfigs.map((cfg) => (
-            <motion.div 
-               key={cfg.id} 
-               initial={{ opacity: 0, scale: 0, y: 20, x: cfg.x }} 
-               animate={{ 
-                   opacity: [0, 1, 1, 0], 
-                   y: -200, 
-                   x: cfg.x,
-                   scale: [0.5, 1, 1, 0.5],
-               }} 
-               exit={{ opacity: 0, scale: 0 }} 
-               transition={{ duration: cfg.duration, repeat: Infinity, delay: cfg.delay, ease: "linear" }} 
-               className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center"
-               style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
-            >
-                <img src={SVGS[cfg.iconIndex]} alt="particle" className="w-full h-full object-contain" style={{ imageRendering: 'pixelated' }} />
-            </motion.div>
-        ))}
-      </AnimatePresence>
     </div>
   );
 }
