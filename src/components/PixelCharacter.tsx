@@ -279,10 +279,10 @@ export default function PixelCharacter({ level }: { level: number }) {
                key={cfg.id} 
                initial={{ opacity: 0, scale: 0, y: 30, x: cfg.x }} 
                animate={{ 
-                   opacity: [0, 1, 1, 0], 
-                   y: -180, 
-                   x: cfg.x,
-                   scale: [0.5, 1, 1, 0.5],
+                   opacity: [0, 1, 1, 1, 0], // 더 높이 올라갈 때까지 투명도 유지
+                   y: -400, // 기존 -180보다 훨씬 높이 올라가도록 수정
+                   x: cfg.x, // x좌표 변동 없이 완벽한 수직 상승
+                   scale: [0.5, 1, 1, 1, 0.5],
                }} 
                exit={{ opacity: 0, scale: 0 }} 
                transition={{ 
