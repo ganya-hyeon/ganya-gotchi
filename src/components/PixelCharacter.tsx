@@ -242,15 +242,15 @@ export default function PixelCharacter({ level }: { level: number }) {
         const intervals = [0.05, 0.15, 0.08, 0.2];
 
         setParticleConfigs(Array.from({ length: 12 }).map((_, i) => {
-          // 일직선으로 올라가도록 고정된 X 좌표 사용
-          const xPos = (Math.random() - 0.5) * 140; 
-          currentDelay += intervals[i % 4]; // 요청하신 불규칙한 타이밍 적용
+          // 일직선으로 올라가도록 고정된 X 좌표 사용 (가로 범위도 더 넓힘)
+          const xPos = (Math.random() - 0.5) * 240; 
+          currentDelay += intervals[i % 4] * 2; // 등장 간격도 좀 더 여유롭게 조절
           
           return {
             id: i,
             x: xPos,
             delay: currentDelay, 
-            duration: 1.6, // 전체 속도를 늦춤 (기존 1.0~1.4 -> 1.6)
+            duration: 4.0 + Math.random() * 2.0, // 전체 속도를 아주 느리게 (4초 ~ 6초)
             iconIndex: Math.floor(Math.random() * 5)
           };
         }));
@@ -279,17 +279,17 @@ export default function PixelCharacter({ level }: { level: number }) {
                key={cfg.id} 
                initial={{ opacity: 0, scale: 0, y: 30, x: cfg.x }} 
                animate={{ 
-                   opacity: [0, 1, 1, 1, 0], // 더 높이 올라갈 때까지 투명도 유지
-                   y: -400, // 기존 -180보다 훨씬 높이 올라가도록 수정
+                   opacity: [0, 1, 1, 1, 0], // 높이 올라갈 때까지 투명도 유지
+                   y: -800, // 기존 -400보다 두 배 더 높이 올라가도록 수정
                    x: cfg.x, // x좌표 변동 없이 완벽한 수직 상승
-                   scale: [0.5, 1, 1, 1, 0.5],
+                   scale: [0.5, 1.2, 1.2, 1, 0.5],
                }} 
                exit={{ opacity: 0, scale: 0 }} 
                transition={{ 
                    duration: cfg.duration, 
                    repeat: Infinity, 
                    delay: cfg.delay, 
-                   ease: (t: number) => Math.floor(t * 4) / 4 // steps(4) 와 동일한 끊어지는 효과
+                   ease: "linear" // 뚝뚝 끊기지 않고 부드럽고 천천히 일직선으로 올라가도록 원복
                }} 
                className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center z-0"
                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
