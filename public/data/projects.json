@@ -1,0 +1,172 @@
+[
+  {
+    "id": "U01",
+    "cat": "ux",
+    "name": "카카오 인터랙션 개선",
+    "client": "카카오 · B2C",
+    "year": "2024",
+    "roles": [
+      "UX Design",
+      "Interaction"
+    ],
+    "status": "done",
+    "size": 5,
+    "desc": {
+      "background": "카카오 서비스 핵심 CTA 버튼 영역 이탈 문제 해결",
+      "thinking": "C4D 물리 기반 마이크로 인터랙션 재설계",
+      "challenge": "구현 가능성과 모션 퀄리티의 균형"
+    },
+    "outcomes": [
+      "클라이언트 재계약",
+      "인터랙션 가이드라인 납품",
+      "시즌2 수주"
+    ],
+    "meta": {
+      "period": "2024.03—04",
+      "team": "디자이너 2인",
+      "tool": "C4D · Figma"
+    },
+    "thumbnail": ""
+  },
+  {
+    "id": "U02",
+    "cat": "ux",
+    "name": "앱 온보딩 리디자인",
+    "client": "핀테크 스타트업",
+    "year": "2024",
+    "roles": [
+      "UX Research",
+      "Wireframe"
+    ],
+    "status": "done",
+    "size": 4,
+    "desc": {
+      "background": "신규 유저 3번째 스텝 이탈률 문제",
+      "thinking": "인지 과부하 제거, 스텝 5→3 압축",
+      "challenge": "정보 손실 없이 단계 축소"
+    },
+    "outcomes": [
+      "UX 가이드라인 사내 채택",
+      "Maze 테스트 프로세스 도입",
+      "추가 프로젝트 수주"
+    ],
+    "meta": {
+      "period": "2024.06—07",
+      "team": "디자이너 1인",
+      "tool": "Figma · Maze"
+    }
+  },
+  {
+    "id": "U03",
+    "cat": "ux",
+    "name": "디자인 시스템 구축",
+    "client": "이커머스 플랫폼",
+    "year": "2024",
+    "roles": [
+      "System Design",
+      "Tokenization"
+    ],
+    "status": "wip",
+    "size": 5,
+    "desc": {
+      "background": "170개 파편화된 컴포넌트 통합",
+      "thinking": "토큰 체계 수립 → Figma-Storybook 브릿지",
+      "challenge": "레거시 컴포넌트 마이그레이션"
+    },
+    "outcomes": [
+      "1단계 토큰 시스템 완료",
+      "핵심 컴포넌트 40개 완료",
+      "2단계 진행 중"
+    ],
+    "meta": {
+      "period": "2024.09—현재",
+      "team": "디자이너 3인",
+      "tool": "Figma · Zeroheight"
+    }
+  },
+  {
+    "id": "V01",
+    "cat": "vid",
+    "name": "브랜드 런칭 캠페인 영상",
+    "client": "패션 브랜드",
+    "year": "2024",
+    "roles": [
+      "Motion Design",
+      "Creative Dir"
+    ],
+    "status": "done",
+    "size": 5,
+    "desc": {
+      "background": "경쟁 브랜드와 차별화된 모션 아이덴티티",
+      "thinking": "브랜드 키 오브젝트 3D 모델링 + 캠페인 인트로",
+      "challenge": "4주 내 고퀄리티 3D 영상 제작"
+    },
+    "outcomes": [
+      "SNS 조회 30만+",
+      "브랜드 모션 가이드 납품",
+      "시즌2 수주"
+    ],
+    "meta": {
+      "period": "2024.05—06",
+      "team": "디자이너 2인",
+      "tool": "C4D · After Effects"
+    }
+  },
+  {
+    "id": "V02",
+    "cat": "vid",
+    "name": "제품 소개 모션 그래픽",
+    "client": "테크 스타트업",
+    "year": "2024",
+    "roles": [
+      "Motion Design",
+      "Storyboard"
+    ],
+    "status": "done",
+    "size": 3,
+    "desc": {
+      "background": "복잡한 SaaS 제품 기능을 영상으로 설명",
+      "thinking": "스토리보드 중심 기능 흐름 시각화",
+      "challenge": "기술적 내용을 직관적 비주얼로 번역"
+    },
+    "outcomes": [
+      "제품 온보딩 영상 활용",
+      "사용자 이해도 향상",
+      "추가 시리즈 수주"
+    ],
+    "meta": {
+      "period": "2024.07",
+      "team": "디자이너 1인",
+      "tool": "After Effects · Figma"
+    }
+  },
+  {
+    "id": "D01",
+    "cat": "3d",
+    "name": "인터랙티브 3D 포트폴리오",
+    "client": "Personal",
+    "year": "2025",
+    "roles": [
+      "3D Dev",
+      "UX Design",
+      "Motion"
+    ],
+    "status": "wip",
+    "size": 5,
+    "desc": {
+      "background": "다마고치 메타포 포트폴리오 — 이 사이트",
+      "thinking": "디자이너 성장 = 캐릭터 성장 게임",
+      "challenge": "인터랙션 + 픽셀아트 + 3D 시스템 통합"
+    },
+    "outcomes": [
+      "캐릭터 시스템 완성",
+      "MediaPipe 손 트래킹 구현",
+      "탭 시스템 설계 중"
+    ],
+    "meta": {
+      "period": "2024.12—현재",
+      "team": "솔로",
+      "tool": "Three.js · React · Figma"
+    }
+  }
+]

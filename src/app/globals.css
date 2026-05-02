@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+@import url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font/web/mona.css");
+@import "tailwindcss";
+
+:root {
+  --background: #0A0A0A;
+  --foreground: #FFFFFF;
+  --primary: #00FFB2;
+  --primary-glow: rgba(0, 255, 178, 0.4);
+  --accent: #FFFFFF;
+  --hud-bg: rgba(10, 10, 10, 0.8);
+  --hud-border: rgba(0, 255, 178, 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  
+  --font-sans: 'Pixelify Sans', 'Mona12', system-ui, sans-serif;
+  --font-mono: 'Pixelify Sans', 'Mona12', ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Pixelify Sans', 'Mona12', 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden; /* Game feel, fixed viewport */
+  cursor: crosshair;
+}
+
+/* Scanline effect */
+body::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 1000;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* CRT flicker */
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.96; }
+  20% { opacity: 0.92; }
+  25% { opacity: 0.98; }
+  30% { opacity: 0.93; }
+  100% { opacity: 1; }
+}
+
+.crt-effect {
+  animation: flicker 0.15s infinite;
+}
+
+/* HUD Glassmorphism */
+.hud-glass {
+  background: var(--hud-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--hud-border);
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.text-neon {
+  color: var(--primary);
+  text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
+}
+
+.border-neon {
+  border-color: var(--primary);
+  box-shadow: 0 0 5px var(--primary);
+}
+
