@@ -55,6 +55,8 @@ interface GameState {
   isTutorialActive: boolean;
   tutorialStep: number;
   workViewMode: 'WORLD' | 'LIST' | 'GRID' | 'GALLERY';
+  isLoading: boolean;
+  error: string | null;
 
   // Actions
   completeProject: (id: string) => void;
@@ -99,6 +101,8 @@ export const useGameStore = create<GameState>((set) => ({
   isTutorialActive: false,
   tutorialStep: 0,
   workViewMode: 'WORLD',
+  isLoading: false,
+  error: null,
 
   completeProject: (id) => set((state) => {
     const updatedProjects = state.projects.map(p => p.id === id ? { ...p, status: 'done' } : p);
@@ -152,11 +156,15 @@ export const useGameStore = create<GameState>((set) => ({
   setWorkViewMode: (mode) => set({ workViewMode: mode }),
 
   fetchProjects: async () => {
+    set({ isLoading: true, error: null });
     try {
       const query = `*[_type == "project"] | order(year desc)`;
       const data = await client.fetch(query);
       
-      // Ensure the data structure matches our internal Project interface
+      if (!data || !Array.isArray(data)) {
+        throw new Error('Invalid data received from Sanity');
+      }
+
       const mappedProjects: Project[] = data.map((p: any) => ({
         id: p.projectId || p._id,
         cat: p.cat || 'ux',
@@ -172,9 +180,10 @@ export const useGameStore = create<GameState>((set) => ({
         thumbnail: p.thumbnail || ''
       }));
 
-      set({ projects: mappedProjects });
+      set({ projects: mappedProjects, isLoading: false });
     } catch (error) {
       console.error('Failed to fetch projects from Sanity:', error);
+      set({ error: 'Failed to fetch projects', isLoading: false });
     }
   }
 }));

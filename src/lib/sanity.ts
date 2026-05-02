@@ -4,5 +4,6 @@ export const client = createClient({
   projectId: 'c4ogf9zt',
   dataset: 'production',
   apiVersion: '2024-05-02',
-  useCdn: true,
+  useCdn: false, // Set to false for writes
+  token: process.env.SANITY_WRITE_TOKEN,
 });

@@ -119,8 +119,7 @@ export default function WorkWorld() {
             }
         }
         if (found !== hoveredProj) {
-            const nextFound = found;
-            requestAnimationFrame(() => setHoveredProj(nextFound));
+            setHoveredProj(found);
         }
     }, [trackingX, trackingY, pan, workViewMode, hoveredProj]);
 
@@ -131,8 +130,7 @@ export default function WorkWorld() {
 
         const render = () => {
             if (workViewMode !== 'WORLD') {
-                animRef.current = requestAnimationFrame(render);
-                return;
+                return; // Stop rendering
             }
 
             const W = canvas.width = canvas.offsetWidth;
@@ -208,7 +206,16 @@ export default function WorkWorld() {
         return () => cancelAnimationFrame(animRef.current);
     }, [workViewMode, pan, hoveredProj]);
 
+    const currentCanvas = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        if (currentCanvas.current && workViewMode === 'WORLD') {
+            startRenderLoop(currentCanvas.current);
+        }
+    }, [workViewMode, startRenderLoop]);
+
     const canvasRef = useCallback((node: HTMLCanvasElement | null) => {
+        currentCanvas.current = node;
         if (node) {
             startRenderLoop(node);
         } else {

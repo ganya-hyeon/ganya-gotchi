@@ -2,24 +2,28 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Download, Send, ChevronRight, Terminal } from 'lucide-react';
+import { ExternalLink, Download, Send, ChevronRight, Terminal, X } from 'lucide-react';
 
-const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+const TypewriterText = ({ text, delay = 0, speed = 50 }: { text: string; delay?: number; speed?: number }) => {
   const [displayedText, setDisplayedText] = useState('');
   
   useEffect(() => {
-    setDisplayedText('');
-    let i = 0;
+    let isMounted = true;
     const timeout = setTimeout(() => {
+      let i = 0;
       const interval = setInterval(() => {
+        if (!isMounted) return;
         setDisplayedText(text.slice(0, i + 1));
         i++;
         if (i >= text.length) clearInterval(interval);
-      }, 50);
+      }, speed);
       return () => clearInterval(interval);
     }, delay);
-    return () => clearTimeout(timeout);
-  }, [text, delay]);
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, [text, delay, speed]);
 
   return <span>{displayedText}</span>;
 };
@@ -285,11 +289,3 @@ function MenuButton({ icon, text, onClick }: { icon: React.ReactNode; text: stri
   );
 }
 
-function X({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}

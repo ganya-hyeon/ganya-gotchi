@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 @import url("https://cdn.jsdelivr.net/gh/MonadABXY/mona-font/web/mona.css");
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -20,6 +21,8 @@
   
   --font-sans: 'Pixelify Sans', 'Mona12', system-ui, sans-serif;
   --font-mono: 'Pixelify Sans', 'Mona12', ui-monospace, monospace;
+  --font-vt323: 'VT323', monospace;
+  --font-share-tech-mono: 'Share Tech Mono', monospace;
 }
 
 body {
@@ -78,4 +81,56 @@ body::after {
   border-color: var(--primary);
   box-shadow: 0 0 5px var(--primary);
 }
+
+/* ── ADMIN DASHBOARD STYLES (MERGED) ── */
+:root {
+  --bg:      #0A0F0A;
+  --bg2:     #0D130D;
+  --bg3:     #111811;
+  --green:   #00FF41;
+  --green2:  #00CC33;
+  --green3:  rgba(0,255,65,.15);
+  --green4:  rgba(0,255,65,.06);
+  --dim:     rgba(0,255,65,.35);
+  --faint:   rgba(0,255,65,.12);
+  --amber:   #FFB000;
+  --red:     #FF3333;
+  --border:  rgba(0,255,65,.18);
+}
+
+.vt-font { font-family: var(--font-vt323), monospace; }
+.share-font { font-family: var(--font-share-tech-mono), monospace; }
+
+.app { display:flex; flex-direction:column; height:100vh; width: 100vw; background: var(--bg); }
+.noise {
+  position: fixed; inset: 0; pointer-events: none; z-index: 8999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* Layout Parts */
+.header { height: 56px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--bg2); position: relative; }
+.body { display:flex; flex:1; overflow:hidden; }
+.sidebar { width: 240px; border-right: 1px solid var(--border); background: var(--bg2); display: flex; flex-direction: column; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Components */
+.panel { border: 1px solid var(--border); background: var(--bg2); position: relative; overflow: hidden; }
+.stat-num { font-family: var(--font-vt323), monospace; font-size: 52px; color: var(--green); text-shadow: 0 0 16px rgba(0, 255, 65, 0.5); }
+.nav-item { padding: 12px 20px; font-size: 12px; color: var(--dim); border-left: 2px solid transparent; transition: all 0.15s; }
+.nav-item.active { color: var(--green); background: var(--green3); border-left-color: var(--green); }
+.btn { font-family: var(--font-share-tech-mono), monospace; font-size: 8px; border: 1px solid var(--border); padding: 5px 14px; color: var(--dim); transition: all 0.18s; }
+.btn.primary { border-color: var(--green2); color: var(--green); }
+
+/* Command Bar */
+.cmd-bar { height: 54px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; padding: 0 24px; gap: 12px; }
+.cmd-input { background: transparent; border: none; outline: none; font-family: var(--font-share-tech-mono), monospace; color: var(--green); }
+
+/* Grid / List */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; padding: 24px 32px; }
+.proj-table { width: 100%; border-collapse: collapse; }
+.proj-row:hover { background: var(--green4); }
+
+.glow { text-shadow: 0 0 10px var(--green); }
 
