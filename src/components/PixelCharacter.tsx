@@ -241,16 +241,21 @@ export default function PixelCharacter({ level }: { level: number }) {
         let currentDelay = 0;
         const intervals = [0.05, 0.15, 0.08, 0.2];
 
-        setParticleConfigs(Array.from({ length: 12 }).map((_, i) => {
-          // 일직선으로 올라가도록 고정된 X 좌표 사용 (너무 넓지 않게 범위 축소)
-          const xPos = (Math.random() - 0.5) * 120; 
-          currentDelay += intervals[i % 4] * 2; // 등장 간격
+        // 아이콘들이 겹치지 않게 하기 위해 가로 범위를 칸으로 나누어 섞습니다.
+        const xRange = 240; // 가로폭 확대
+        const particleCount = 12;
+        const step = xRange / particleCount;
+        const xPositions = Array.from({ length: particleCount }).map((_, i) => (i * step) - (xRange / 2));
+        const shuffledX = xPositions.sort(() => Math.random() - 0.5);
+
+        setParticleConfigs(Array.from({ length: particleCount }).map((_, i) => {
+          currentDelay += intervals[i % 4] * 2; 
           
           return {
             id: i,
-            x: xPos,
+            x: shuffledX[i], // 섞인 좌표를 사용하여 겹침 방지
             delay: currentDelay, 
-            duration: 4.5, // 픽셀 게임처럼 모든 입자가 똑같이 일정한 느린 속도로 상승
+            duration: 4.5, 
             iconIndex: Math.floor(Math.random() * 5)
           };
         }));
@@ -277,17 +282,18 @@ export default function PixelCharacter({ level }: { level: number }) {
         {isPetting && particleConfigs.map((cfg) => (
             <motion.div 
                key={cfg.id} 
-               initial={{ opacity: 0, y: 30, x: cfg.x }} 
+               initial={{ opacity: 0, y: 30, x: cfg.x, scale: 0.3 }} 
                animate={{ 
-                   opacity: [0, 1, 1, 1, 0], // 올라갈 때까지 투명도 유지
-                   y: -600, // 높이를 -600으로 줄임
+                   opacity: [0, 1, 1, 1, 0], 
+                   y: -400, // 높이를 -400으로 조정
+                   scale: 0.3, // 크기를 약 30%로 고정
                }} 
                exit={{ opacity: 0 }} 
                transition={{ 
                    duration: cfg.duration, 
                    repeat: Infinity, 
                    delay: cfg.delay, 
-                   ease: "linear" // 버벅임 없이 완전히 부드러운 수직 상승
+                   ease: "linear" 
                }} 
                className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center z-0"
                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
