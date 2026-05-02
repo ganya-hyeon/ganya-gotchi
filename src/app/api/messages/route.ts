@@ -16,6 +16,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
+    if (!process.env.SANITY_WRITE_TOKEN) {
+      console.error('SANITY_WRITE_TOKEN is missing in environment variables');
+      return NextResponse.json({ error: 'Server configuration error: missing token' }, { status: 500 });
+    }
+
     const newMessage = {
       _type: 'message',
       id: Date.now().toString(),
@@ -25,12 +30,21 @@ export async function POST(request: Request) {
       status: 'unread'
     };
     
+    console.log('Attempting to create message in Sanity:', newMessage.id);
     const result = await client.create(newMessage);
+    console.log('Message created successfully:', result._id);
     
     return NextResponse.json({ success: true, message: result });
   } catch (error: any) {
-    console.error('Failed to save message to Sanity:', error);
-    return NextResponse.json({ error: error.message || 'Failed to save message' }, { status: 500 });
+    console.error('CRITICAL: Failed to save message to Sanity:', error);
+    // Log more details if available
+    if (error.response) {
+      console.error('Sanity Error Response:', error.response.body);
+    }
+    return NextResponse.json({ 
+      error: error.message || 'Failed to save message',
+      details: error.response?.body || undefined
+    }, { status: 500 });
   }
 }
 
