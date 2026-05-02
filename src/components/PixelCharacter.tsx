@@ -242,15 +242,15 @@ export default function PixelCharacter({ level }: { level: number }) {
         const intervals = [0.05, 0.15, 0.08, 0.2];
 
         setParticleConfigs(Array.from({ length: 12 }).map((_, i) => {
-          // 일직선으로 올라가도록 고정된 X 좌표 사용 (가로 범위도 더 넓힘)
-          const xPos = (Math.random() - 0.5) * 240; 
-          currentDelay += intervals[i % 4] * 2; // 등장 간격도 좀 더 여유롭게 조절
+          // 일직선으로 올라가도록 고정된 X 좌표 사용 (너무 넓지 않게 범위 축소)
+          const xPos = (Math.random() - 0.5) * 120; 
+          currentDelay += intervals[i % 4] * 2; // 등장 간격
           
           return {
             id: i,
             x: xPos,
             delay: currentDelay, 
-            duration: 4.0 + Math.random() * 2.0, // 전체 속도를 아주 느리게 (4초 ~ 6초)
+            duration: 4.5, // 픽셀 게임처럼 모든 입자가 똑같이 일정한 느린 속도로 상승
             iconIndex: Math.floor(Math.random() * 5)
           };
         }));
@@ -277,19 +277,17 @@ export default function PixelCharacter({ level }: { level: number }) {
         {isPetting && particleConfigs.map((cfg) => (
             <motion.div 
                key={cfg.id} 
-               initial={{ opacity: 0, scale: 0, y: 30, x: cfg.x }} 
+               initial={{ opacity: 0, y: 30, x: cfg.x }} 
                animate={{ 
-                   opacity: [0, 1, 1, 1, 0], // 높이 올라갈 때까지 투명도 유지
-                   y: -800, // 기존 -400보다 두 배 더 높이 올라가도록 수정
-                   x: cfg.x, // x좌표 변동 없이 완벽한 수직 상승
-                   scale: [0.5, 1.2, 1.2, 1, 0.5],
+                   opacity: [0, 1, 1, 1, 0], // 올라갈 때까지 투명도 유지
+                   y: -600, // 높이를 -600으로 줄임
                }} 
-               exit={{ opacity: 0, scale: 0 }} 
+               exit={{ opacity: 0 }} 
                transition={{ 
                    duration: cfg.duration, 
                    repeat: Infinity, 
                    delay: cfg.delay, 
-                   ease: "linear" // 뚝뚝 끊기지 않고 부드럽고 천천히 일직선으로 올라가도록 원복
+                   ease: "linear" // 버벅임 없이 완전히 부드러운 수직 상승
                }} 
                className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center z-0"
                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
