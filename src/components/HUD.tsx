@@ -115,7 +115,6 @@ export default function HUD() {
         className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 flex flex-col gap-2 md:gap-4 pointer-events-auto"
       >
         {[
-          { icon: Activity, label: 'Pulse', action: () => {} },
           { icon: Heart, label: 'Status', action: () => setActiveTab('STATUS') },
           { icon: Terminal, label: 'Logs', action: () => setActiveTab('LOGS') },
         ].map((item, idx) => (
@@ -167,16 +166,6 @@ export default function HUD() {
             onClick={() => {
                 setActiveTab('FEED');
                 triggerFeeding();
-                setFeedQuest(null);
-            }}
-          />
-          <div className="w-[1px] h-6 bg-primary/20 mx-1" />
-          <NavButton 
-            icon={Menu} 
-            label="Menu" 
-            active={activeTab === 'MENU'} 
-            onClick={() => {
-                setActiveTab('MENU');
                 setFeedQuest(null);
             }}
           />

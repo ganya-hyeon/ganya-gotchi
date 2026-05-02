@@ -282,11 +282,11 @@ export default function PixelCharacter({ level }: { level: number }) {
         {isPetting && particleConfigs.map((cfg) => (
             <motion.div 
                key={cfg.id} 
-               initial={{ opacity: 0, y: 30, x: cfg.x, scale: 0.3 }} 
+               initial={{ opacity: 0, y: 30, x: cfg.x, scale: 0.6 }} 
                animate={{ 
                    opacity: [0, 1, 1, 1, 0], 
                    y: -400, // 높이를 -400으로 조정
-                   scale: 0.3, // 크기를 약 30%로 고정
+                   scale: 0.6, // 크기를 약 60%로 고정
                }} 
                exit={{ opacity: 0 }} 
                transition={{ 
