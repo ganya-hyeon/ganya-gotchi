@@ -122,32 +122,34 @@ export default function ProjectEditor() {
   };
 
   const handleSave = async () => {
+    if (!project.name) {
+      alert('PROJECT NAME IS REQUIRED');
+      return;
+    }
+
     setSaving(true);
     try {
-      const res = await fetch('/api/projects');
-      const allProjects: Project[] = await res.json();
-      
-      let updatedProjects: Project[];
+      const payload = { ...project };
       if (isNew) {
-        const newId = Math.random().toString(36).substr(2, 9);
-        updatedProjects = [...allProjects, { ...project, id: newId }];
-      } else {
-        updatedProjects = allProjects.map(p => p.id === id ? project : p);
+        payload.id = Math.random().toString(36).substr(2, 9);
       }
 
       const saveRes = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedProjects)
+        body: JSON.stringify(payload)
       });
 
       if (saveRes.ok) {
         alert('PROJECT SAVED SUCCESSFULLY');
         router.push('/admin/projects');
+      } else {
+        const errorData = await saveRes.json();
+        throw new Error(errorData.error || 'Save failed');
       }
-    } catch {
-      console.error('Save failed');
-      alert('SAVE FAILED');
+    } catch (err: any) {
+      console.error('Save failed:', err);
+      alert(`SAVE FAILED: ${err.message}`);
     } finally {
       setSaving(false);
     }
