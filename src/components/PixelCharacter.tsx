@@ -225,16 +225,26 @@ export default function PixelCharacter({ level }: { level: number }) {
     }
   }, [trackingX, trackingY, eyeState, isPetting, isWaving]);
 
-  const [particleConfigs, setParticleConfigs] = useState<{y:number,x:number,rotate:number,duration:number}[]>([]);
+  const SVGS = [
+    '/icons/bubble_01.svg',
+    '/icons/light_01.svg',
+    '/icons/star02.svg',
+    '/icons/light_02.svg',
+    '/icons/star_01.svg'
+  ];
+
+  const [particleConfigs, setParticleConfigs] = useState<{id:number, startX:number, endX:number, delay:number, duration:number, iconIndex:number}[]>([]);
   
   useEffect(() => {
     if (isPetting && particleConfigs.length === 0) {
       const generate = setTimeout(() => {
-        setParticleConfigs(Array.from({ length: 8 }).map(() => ({
-          y: -150 - (Math.random() * 80),
-          x: (Math.random() - 0.5) * 220,
-          rotate: (Math.random() - 0.5) * 180,
-          duration: 1.2 + Math.random() * 0.8
+        setParticleConfigs(Array.from({ length: 12 }).map((_, i) => ({
+          id: i,
+          startX: (Math.random() - 0.5) * 160,
+          endX: (Math.random() - 0.5) * 200,
+          delay: i * 0.1, // Staggered appearance like a program
+          duration: 1.2 + Math.random() * 0.6,
+          iconIndex: Math.floor(Math.random() * 5)
         })));
       }, 0);
       return () => clearTimeout(generate);
@@ -268,23 +278,23 @@ export default function PixelCharacter({ level }: { level: number }) {
       
       {/* Petting Particles */}
       <AnimatePresence>
-        {isPetting && particleConfigs.map((cfg, i) => (
+        {isPetting && particleConfigs.map((cfg) => (
             <motion.div 
-               key={i} 
-               initial={{ opacity: 0, scale: 0, y: 20 }} 
+               key={cfg.id} 
+               initial={{ opacity: 0, scale: 0, y: 50, x: cfg.startX }} 
                animate={{ 
                    opacity: [0, 1, 1, 0], 
-                   y: cfg.y, 
-                   x: cfg.x,
-                   scale: [0.5, 1.8, 1.5, 0.2],
-                   rotate: cfg.rotate
+                   y: -220, 
+                   x: cfg.endX,
+                   scale: [0.5, 1.2, 1, 0.5],
+                   rotate: [0, Math.random() > 0.5 ? 90 : -90]
                }} 
-               exit={{ opacity: 0 }} 
-               transition={{ duration: cfg.duration, repeat: Infinity, delay: i * 0.15 }} 
-               className="absolute pointer-events-none select-none text-4xl"
-               style={{ filter: 'drop-shadow(0 0 15px rgba(255, 50, 160, 0.9))' }}
+               exit={{ opacity: 0, scale: 0 }} 
+               transition={{ duration: cfg.duration, repeat: Infinity, delay: cfg.delay, ease: "easeOut" }} 
+               className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center"
+               style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
             >
-                {['💖', '⭐', '✨', '💕', '💗', '🌟', '💎', '💓'][i]}
+                <img src={SVGS[cfg.iconIndex]} alt="particle" className="w-full h-full object-contain" />
             </motion.div>
         ))}
       </AnimatePresence>

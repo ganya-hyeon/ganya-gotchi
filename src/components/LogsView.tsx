@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Award, Briefcase, Zap, Star, ChevronRight } from 'lucide-react';
+import { Terminal, Award, Briefcase, Zap, Star, ChevronRight, X } from 'lucide-react';
+import { useGameStore } from '@/store/useGameStore';
 
 const CHAPTERS = [
   { id: 'all', year: 'ALL', label: '전체 기록', lv: 'LV.4', lvName: 'EVOLVING', exp: 960 },
@@ -71,6 +72,7 @@ interface Stats {
 }
 
 export default function LogsView() {
+  const { setActiveTab } = useGameStore();
   const [activeChapter, setActiveChapter] = useState('all');
   const [filter, setFilter] = useState('all');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -150,9 +152,16 @@ export default function LogsView() {
       </div>
 
       {/* Center: Terminal Log */}
-      <div className="flex-1 min-h-[400px] lg:min-h-0 flex flex-col hud-glass rounded-2xl overflow-hidden pointer-events-auto border-primary/10 order-2 lg:order-none">
+      <div className="flex-1 min-h-[400px] lg:min-h-0 flex flex-col hud-glass rounded-2xl overflow-hidden pointer-events-auto border-primary/10 order-2 lg:order-none relative">
+        <button 
+          onClick={() => setActiveTab('')} 
+          className="absolute top-4 right-4 lg:top-6 lg:right-6 text-primary/50 hover:text-primary hover:bg-primary/10 p-1.5 rounded-md transition-all z-10"
+        >
+          <X size={20} />
+        </button>
+
         <div className="p-4 lg:p-6 border-b border-primary/10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-          <div>
+          <div className="pr-10">
             <h2 className="text-primary font-mono text-xs lg:text-sm font-black tracking-[0.2em] uppercase">
               {activeChapter === 'all' ? 'SYSTEM_TOTAL_LOGS' : `CHAPTER_${activeChapter.toUpperCase()}_LOGS`}
             </h2>
