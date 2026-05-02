@@ -154,7 +154,7 @@ export default function LogsView() {
       {/* Center: Terminal Log */}
       <div className="flex-1 min-h-[400px] lg:min-h-0 flex flex-col hud-glass rounded-2xl overflow-hidden pointer-events-auto border-primary/10 order-2 lg:order-none relative">
         <button 
-          onClick={() => setActiveTab('')} 
+          onClick={() => setActiveTab('MENU')} 
           className="absolute top-4 right-4 lg:top-6 lg:right-6 text-primary/50 hover:text-primary hover:bg-primary/10 p-1.5 rounded-md transition-all z-10"
         >
           <X size={20} />
