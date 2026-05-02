@@ -1,8 +1,8 @@
-[[redirects]]
-  from = "/studio/*"
-  to = "/studio/:splat"
-  status = 200
-
 [build]
   command = "npm run build"
-  publish = ".next"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
