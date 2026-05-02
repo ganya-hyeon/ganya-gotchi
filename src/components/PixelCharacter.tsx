@@ -233,19 +233,22 @@ export default function PixelCharacter({ level }: { level: number }) {
     '/icons/star_01.svg'
   ];
 
-  const [particleConfigs, setParticleConfigs] = useState<{id:number, startX:number, endX:number, delay:number, duration:number, iconIndex:number}[]>([]);
+  const [particleConfigs, setParticleConfigs] = useState<{id:number, x:number, delay:number, duration:number, iconIndex:number}[]>([]);
   
   useEffect(() => {
     if (isPetting && particleConfigs.length === 0) {
       const generate = setTimeout(() => {
-        setParticleConfigs(Array.from({ length: 12 }).map((_, i) => ({
-          id: i,
-          startX: (Math.random() - 0.5) * 160,
-          endX: (Math.random() - 0.5) * 200,
-          delay: i * 0.1, // Staggered appearance like a program
-          duration: 1.2 + Math.random() * 0.6,
-          iconIndex: Math.floor(Math.random() * 5)
-        })));
+        setParticleConfigs(Array.from({ length: 12 }).map((_, i) => {
+          // 일직선으로 올라가도록 고정된 X 좌표 사용
+          const xPos = (Math.random() - 0.5) * 140; 
+          return {
+            id: i,
+            x: xPos,
+            delay: i * 0.15, // 따다닥 등장하는 간격
+            duration: 1.0 + Math.random() * 0.4, // 일정한 속도감 부여
+            iconIndex: Math.floor(Math.random() * 5)
+          };
+        }));
       }, 0);
       return () => clearTimeout(generate);
     } else if (!isPetting && particleConfigs.length > 0) {
@@ -281,20 +284,19 @@ export default function PixelCharacter({ level }: { level: number }) {
         {isPetting && particleConfigs.map((cfg) => (
             <motion.div 
                key={cfg.id} 
-               initial={{ opacity: 0, scale: 0, y: 50, x: cfg.startX }} 
+               initial={{ opacity: 0, scale: 0, y: 20, x: cfg.x }} 
                animate={{ 
                    opacity: [0, 1, 1, 0], 
-                   y: -220, 
-                   x: cfg.endX,
-                   scale: [0.5, 1.2, 1, 0.5],
-                   rotate: [0, Math.random() > 0.5 ? 90 : -90]
+                   y: -200, 
+                   x: cfg.x,
+                   scale: [0.5, 1, 1, 0.5],
                }} 
                exit={{ opacity: 0, scale: 0 }} 
-               transition={{ duration: cfg.duration, repeat: Infinity, delay: cfg.delay, ease: "easeOut" }} 
+               transition={{ duration: cfg.duration, repeat: Infinity, delay: cfg.delay, ease: "linear" }} 
                className="absolute pointer-events-none select-none w-8 h-8 flex items-center justify-center"
                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 255, 178, 0.8))' }}
             >
-                <img src={SVGS[cfg.iconIndex]} alt="particle" className="w-full h-full object-contain" />
+                <img src={SVGS[cfg.iconIndex]} alt="particle" className="w-full h-full object-contain" style={{ imageRendering: 'pixelated' }} />
             </motion.div>
         ))}
       </AnimatePresence>
