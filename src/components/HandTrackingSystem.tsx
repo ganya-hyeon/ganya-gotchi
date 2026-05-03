@@ -187,7 +187,9 @@ export default function HandTrackingSystem() {
         
         if (isIndexOnly && dist < (isMobile ? 120 : 180)) {
             setHovering(true);
-            if (lastPetX.current !== null && Math.abs(indexTip.x - lastPetX.current) > 0.02) {
+            const moveDist = lastPetX.current !== null ? Math.abs(indexTip.x - lastPetX.current) : 0;
+            
+            if (moveDist > 0.015) { // 감도를 살짝 완화
                 setPetting(true, 1);
                 
                 const nowTime = Date.now();
@@ -197,12 +199,19 @@ export default function HandTrackingSystem() {
                     setPriorityDialogue(randomMsg);
                     lastPetTime.current = nowTime;
                 }
+                // 실시간 쓰다듬기 상태 업데이트 시간 기록 (깜빡임 방지용)
+                lastClickTime.current = nowTime; 
             } else {
-                setPetting(false, 0);
+                // 움직임이 멈춰도 300ms 동안은 쓰다듬기 상태 유지
+                if (Date.now() - lastClickTime.current > 300) {
+                    setPetting(false, 0);
+                }
             }
             lastPetX.current = indexTip.x;
         } else {
-            setHovering(false); setPetting(false, 0); lastPetX.current = null;
+            setHovering(false); 
+            setPetting(false, 0); 
+            lastPetX.current = null;
         }
 
         if (isOpenHand) {
