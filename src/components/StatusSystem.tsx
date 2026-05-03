@@ -27,7 +27,7 @@ const CATS = [
           { name: '트리거 설계', val: 88 },
           { name: '피드백 루프', val: 90 },
         ],
-        projects: ['카카오 인터랙션 개선', '앱 온보딩 리디자인'],
+        projects: ['UI 디자인 개선', '앱 온보딩 리디자인'],
       },
       {
         icon: '◉',
@@ -246,7 +246,7 @@ export default function StatusSystem() {
       <div className="h-16 border-b border-primary/10 px-8 flex items-center justify-between z-10">
         <div className="flex items-center gap-6">
           <div>
-            <div className="text-[10px] text-primary/60 font-bold uppercase tracking-widest leading-tight">Subject_Profile</div>
+            <div className="text-[10px] text-primary/60 font-bold uppercase tracking-widest leading-tight">Profile</div>
             <div className="text-primary font-mono text-[18px] font-bold leading-tight tracking-[0.2em]">GANYA · STATUS</div>
           </div>
           <div className="h-8 w-[1px] bg-primary/10" />

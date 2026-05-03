@@ -73,7 +73,7 @@ export default function SignalSystem() {
         addLog('> error: signal lost');
         setIsTransmitting(false);
       }
-    } catch (error) {
+    } catch {
       addLog('> error: network failure');
       setIsTransmitting(false);
     }
@@ -181,7 +181,7 @@ export default function SignalSystem() {
                     <MenuButton 
                       icon={<ExternalLink className="w-4 h-4" />} 
                       text="1. View Work" 
-                      onClick={() => window.open('https://behance.net', '_blank')}
+                      onClick={() => window.open('https://notefolio.net/eundesign', '_blank')}
                     />
                     <MenuButton 
                       icon={<Download className="w-4 h-4" />} 

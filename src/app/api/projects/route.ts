@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const data = await client.fetch(`*[_type == "project"] | order(year desc)`);
     // Ensure ID consistency for the frontend
-    const mappedData = data.map((p: any) => ({
+    const mappedData = data.map((p: { projectId?: string; _id: string }) => ({
       ...p,
       id: p.projectId || p._id
     }));

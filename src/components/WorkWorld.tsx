@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore, type Project } from '@/store/useGameStore';
-import { Globe, Layout, Box, ArrowRight, Maximize2, Grid, Menu } from 'lucide-react';
+import { Globe, Box, ArrowRight, Maximize2, Menu } from 'lucide-react';
 
 // --- Project Data is now loaded from useGameStore ---
 interface Star {
@@ -93,7 +93,6 @@ export default function WorkWorld() {
 
     const [hoveredProj, setHoveredProj] = useState<Project | null>(null);
 
-    const lastCoords = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         if (workViewMode !== 'WORLD') {
@@ -247,25 +246,9 @@ export default function WorkWorld() {
                         <button
                             onClick={() => setWorkViewMode('LIST')}
                             className={`px-3 md:px-6 py-2 md:py-2.5 flex items-center gap-2 transition-all flex-shrink-0 ${workViewMode === 'LIST' ? 'bg-primary/20 text-primary shadow-[inset_0_0_15px_rgba(0,255,178,0.2)]' : 'text-primary/40 hover:text-primary'}`}
-                            style={{ borderRight: '1px solid rgba(0,255,178,0.1)' }}
                         >
                             <Menu className="w-3 md:w-3.5 h-3 md:h-3.5" />
                             <span className="text-[8px] md:text-[10px] font-mono font-black uppercase tracking-widest">List</span>
-                        </button>
-                        <button
-                            onClick={() => setWorkViewMode('GRID')}
-                            className={`px-3 md:px-6 py-2 md:py-2.5 flex items-center gap-2 transition-all flex-shrink-0 ${workViewMode === 'GRID' ? 'bg-primary/20 text-primary shadow-[inset_0_0_15px_rgba(0,255,178,0.2)]' : 'text-primary/40 hover:text-primary'}`}
-                            style={{ borderRight: '1px solid rgba(0,255,178,0.1)' }}
-                        >
-                            <Grid className="w-3 md:w-3.5 h-3 md:h-3.5" />
-                            <span className="text-[8px] md:text-[10px] font-mono font-black uppercase tracking-widest">Grid</span>
-                        </button>
-                        <button
-                            onClick={() => setWorkViewMode('GALLERY')}
-                            className={`px-3 md:px-6 py-2 md:py-2.5 flex items-center gap-2 transition-all flex-shrink-0 ${workViewMode === 'GALLERY' ? 'bg-primary/20 text-primary shadow-[inset_0_0_15px_rgba(0,255,178,0.2)]' : 'text-primary/40 hover:text-primary'}`}
-                        >
-                            <Layout className="w-3 md:w-3.5 h-3 md:h-3.5" />
-                            <span className="text-[8px] md:text-[10px] font-mono font-black uppercase tracking-widest">Gallery</span>
                         </button>
                     </div>
 
@@ -383,82 +366,6 @@ export default function WorkWorld() {
                                 <p>▶ DRAG TO PAN_WORLD</p>
                                 <p>▶ CLICK TO ACCESS_DB</p>
                             </div>
-                        </motion.div>
-                    ) : workViewMode === 'GRID' ? (
-                        <motion.div
-                            key="grid"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.1 }}
-                            className="w-full h-full p-6 md:p-24 pt-32 md:pt-40 overflow-y-auto custom-scrollbar"
-                        >
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 auto-rows-auto md:auto-rows-[280px]">
-                                {projects.map((p, i) => (
-                                    <motion.div
-                                        key={p.id}
-                                        whileHover={{ y: -10 }}
-                                        onClick={() => { setSelectedProject(p); setWorkViewMode('LIST'); }}
-                                        className={`group relative rounded-2xl border border-primary/10 bg-black/40 backdrop-blur-xl overflow-hidden cursor-pointer p-6 min-h-[200px] ${i % 4 === 0 ? 'md:col-span-2' : ''}`}
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-[10px] font-mono text-primary/40 uppercase">{p.id}</span>
-                                            <h3 className="text-white text-lg md:text-xl font-black">{p.name}</h3>
-                                            <p className="text-primary/60 text-[10px] md:text-xs uppercase tracking-widest">{p.client}</p>
-                                        </div>
-                                        <div className="mt-8 md:absolute md:bottom-6 md:left-6 md:right-6 flex justify-between items-end">
-                                            <div className="flex gap-2">
-                                                {p.roles.slice(0, 2).map(role => (
-                                                    <span key={role} className="text-[8px] text-primary/40 px-2 py-0.5 border border-primary/10 rounded-full">{role}</span>
-                                                ))}
-                                            </div>
-                                            <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
-                                        </div>
-                                        {/* Tech tag */}
-                                        <div className="absolute top-6 right-6">
-                                            <div className="w-2 h-2 rounded-full shadow-[0_0_10px_var(--col)]" style={{ backgroundColor: CAT_COLOR[p.cat as keyof typeof CAT_COLOR], '--col': CAT_COLOR[p.cat as keyof typeof CAT_COLOR] } as React.CSSProperties} />
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    ) : workViewMode === 'GALLERY' ? (
-                        <motion.div
-                            key="gallery"
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -50 }}
-                            className="w-full h-full flex items-center px-6 md:px-12 overflow-x-auto custom-scrollbar gap-6 md:gap-12 snap-x"
-                        >
-                            {projects.map((p) => (
-                                <motion.div
-                                    key={p.id}
-                                    whileHover={{ scale: 1.05 }}
-                                    onClick={() => { setSelectedProject(p); setWorkViewMode('LIST'); }}
-                                    className="flex-shrink-0 w-[85vw] md:w-[450px] aspect-[4/5] rounded-3xl border border-primary/20 bg-black/60 relative overflow-hidden group cursor-pointer snap-center"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
-                                    <div className="absolute top-8 md:top-12 left-8 md:left-12 z-20">
-                                        <span className="text-primary font-mono text-xs md:text-sm tracking-[0.5em]">{p.id}</span>
-                                        <h3 className="text-white text-3xl md:text-5xl font-black mt-2 md:mt-4 leading-none">{p.name}</h3>
-                                    </div>
-                                    <div className="absolute bottom-8 md:bottom-12 left-8 md:left-12 right-8 md:right-12 z-20 flex justify-between items-end">
-                                        <div className="flex flex-col gap-1 md:gap-2">
-                                            <p className="text-primary font-bold text-base md:text-lg">{p.year}</p>
-                                            <p className="text-primary/40 text-[8px] md:text-[10px] uppercase tracking-widest">{p.client}</p>
-                                        </div>
-                                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-primary/20 flex items-center justify-center group-hover:bg-primary transition-all group-hover:scale-110">
-                                            <ArrowRight className="w-6 h-6 md:w-8 md:h-8 text-primary group-hover:text-black transition-colors" />
-                                        </div>
-                                    </div>
-                                    {/* Visual background element */}
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <Globe className="w-48 md:w-64 h-48 md:h-64 text-primary animate-spin-slow" />
-                                    </div>
-                                </motion.div>
-                            ))}
-                            {/* End spacer */}
-                            <div className="w-24 flex-shrink-0" />
                         </motion.div>
                     ) : (
                         <motion.div

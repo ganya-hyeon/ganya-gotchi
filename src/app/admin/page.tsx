@@ -19,7 +19,7 @@ export default function AdminDashboard() {
     // Fetch Project Stats
     fetch('/api/projects')
       .then(res => res.json())
-      .then((data: any[]) => {
+      .then((data: { status: string }[]) => {
         if (Array.isArray(data)) {
           const done = data.filter(p => p.status === 'done').length;
           const wip = data.filter(p => p.status === 'wip').length;
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
               <div className="panel-head"><span>ACTIVITY_LOG</span><div className="panel-head-dot"></div></div>
               <div className="panel-body">
                 <div className="log-list">
-                    <LogEntry time="14:38" icon="ok" text='PROJECT "카카오 인터랙션" PUBLISHED' />
+                    <LogEntry time="14:38" icon="ok" text='PROJECT "UI 디자인 개선" PUBLISHED' />
                     <LogEntry time="13:12" icon="ok" text='VISITOR COUNT UPDATED · +12' />
                     <LogEntry time="11:55" icon="warn" text='DRAFT "디자인 시스템" MODIFIED' />
                     <LogEntry time="10:30" icon="ok" text='SYNC COMPLETE · 7 ITEMS' />

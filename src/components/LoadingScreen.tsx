@@ -24,18 +24,22 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
           clearInterval(interval);
           return 100;
         }
-        return prev + Math.floor(Math.random() * 10) + 5;
+        // 더 빠르게 차오르도록 조정 (2~5%씩 증가)
+        return prev + Math.floor(Math.random() * 4) + 2;
       });
-    }, 50);
+    }, 50); // 간격도 80ms -> 50ms로 단축
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (progress >= 100 && !isReady) {
-      setIsReady(true);
+    if (progress >= 100) {
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 500); // 0.5초 대기 후 자동 전환
+      return () => clearTimeout(timer);
     }
-  }, [progress, isReady]);
+  }, [progress, onComplete]);
 
   useEffect(() => {
     const logInterval = setInterval(() => {
@@ -123,23 +127,8 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
             </div>
         </div>
 
-        {/* Wake Up Button */}
-        <div className="mt-16 flex justify-center h-20">
-            <AnimatePresence>
-                {isReady && (
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ scale: 1.05, boxShadow: '0 0 30px #00FFB2' }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={onComplete}
-                        className="px-12 py-4 bg-primary text-black font-mono font-black text-lg rounded-full tracking-[0.2em] uppercase transition-all"
-                    >
-                        Wake Up Ganya
-                    </motion.button>
-                )}
-            </AnimatePresence>
-        </div>
+        {/* Space reserved for the previous button to keep layout stable */}
+        <div className="mt-16 h-20" />
       </div>
 
       {/* Background Grid */}

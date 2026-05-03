@@ -45,7 +45,9 @@ export default function HandCursor() {
 
   React.useEffect(() => {
     if (trackingX !== 0 || trackingY !== 0) {
-      setTrail(prev => [{ x: trackingX, y: trackingY }, ...prev].slice(0, 3));
+      setTimeout(() => {
+        setTrail(prev => [{ x: trackingX, y: trackingY }, ...prev].slice(0, 3));
+      }, 0);
     }
   }, [trackingX, trackingY]);
 

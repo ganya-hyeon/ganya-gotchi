@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/useGameStore';
-import { Stars, Sparkles, Hand, Target, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
+import { Hand, Target, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
 
 interface DataPoint {
   id: number;
@@ -35,15 +35,38 @@ export default function TutorialOverlay() {
   const [timeLeft, setTimeLeft] = useState(5);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const advanceToInteract = React.useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    
+    // Page transitions based on step - wrapped in setTimeout to prevent render cycle conflicts
+    setTimeout(() => {
+      if (tutorialStep === 3) {
+        setActiveTab('QUEST_LOG');
+      } else {
+        setActiveTab('WORK');
+      }
+    }, 0);
+    
+    setPhase('INTERACT');
+  }, [tutorialStep, setActiveTab]);
+
   // Spotlight config
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50, radius: 0, opacity: 0 });
+
+  const triggerSuccess = React.useCallback((callback: () => void) => {
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+      callback();
+    }, 1500);
+  }, []);
 
   // Handle Phase Transitions
   useEffect(() => {
     if (!isTutorialActive) return;
 
     if (phase === 'EXPLAIN') {
-      setTimeLeft(5);
+      setTimeout(() => setTimeLeft(5), 0);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -63,7 +86,7 @@ export default function TutorialOverlay() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [phase, tutorialStep, isTutorialActive]);
+  }, [phase, tutorialStep, isTutorialActive, advanceToInteract]);
 
   // Handle final exit with slide-up effect
   useEffect(() => {
@@ -76,46 +99,33 @@ export default function TutorialOverlay() {
     }
   }, [isTutorialActive, tutorialStep, setTutorialActive, setTutorialStep]);
 
-  const advanceToInteract = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    
-    // Page transitions based on step - wrapped in setTimeout to prevent render cycle conflicts
-    setTimeout(() => {
-      if (tutorialStep === 3) {
-        setActiveTab('QUEST_LOG');
-      } else {
-        setActiveTab('WORK');
-      }
-    }, 0);
-    
-    setPhase('INTERACT');
-  };
-
   // Update spotlight based on phase and step
   useEffect(() => {
     if (!isTutorialActive) return;
 
     if (phase === 'EXPLAIN') {
-      setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0.8 }); // Dim all for explanation
+      setTimeout(() => setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0.8 }), 0); // Dim all for explanation
       return;
     }
 
-    switch (tutorialStep) {
-      case 0: // Start Button
-        setSpotlight({ x: 85, y: 15, radius: 100, opacity: 0.8 });
-        break;
-      case 1: // Tracking
-        setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0 });
-        break;
-      case 2: // Pinch
-        setSpotlight({ x: 50, y: 50, radius: 120, opacity: 0.8 });
-        break;
-      case 3: // Petting
-        setSpotlight({ x: 50, y: 50, radius: 200, opacity: 0.8 });
-        break;
-      default:
-        setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0 });
-    }
+    setTimeout(() => {
+      switch (tutorialStep) {
+        case 0: // Start Button
+          setSpotlight({ x: 85, y: 15, radius: 100, opacity: 0.8 });
+          break;
+        case 1: // Tracking
+          setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0 });
+          break;
+        case 2: // Pinch
+          setSpotlight({ x: 50, y: 50, radius: 120, opacity: 0.8 });
+          break;
+        case 3: // Petting
+          setSpotlight({ x: 50, y: 50, radius: 200, opacity: 0.8 });
+          break;
+        default:
+          setSpotlight({ x: 50, y: 50, radius: 0, opacity: 0 });
+      }
+    }, 0);
   }, [tutorialStep, phase, isTutorialActive]);
 
   // Interaction Logic
@@ -125,47 +135,50 @@ export default function TutorialOverlay() {
     if (tutorialStep === 1) {
       const tx = (trackingX / window.innerWidth) * 100;
       const ty = (trackingY / window.innerHeight) * 100;
-      const updatedPoints = dataPoints.map(p => {
-        if (!p.collected) {
-          const dist = Math.sqrt(Math.pow(tx - p.x, 2) + Math.pow(ty - p.y, 2));
-          if (dist < 5) return { ...p, collected: true };
-        }
-        return p;
-      });
-
-      if (updatedPoints.some((p, i) => p.collected !== dataPoints[i].collected)) {
-        setDataPoints(updatedPoints);
-        if (updatedPoints.every(p => p.collected)) {
-          triggerSuccess(() => {
-            setTutorialStep(2);
-            setPhase('EXPLAIN');
+      
+      setTimeout(() => {
+        setDataPoints(prevPoints => {
+          const updated = prevPoints.map(p => {
+            if (!p.collected) {
+              const dist = Math.sqrt(Math.pow(tx - p.x, 2) + Math.pow(ty - p.y, 2));
+              if (dist < 5) return { ...p, collected: true };
+            }
+            return p;
           });
-        }
-      }
+
+          const isChanged = updated.some((p, i) => p.collected !== prevPoints[i].collected);
+          if (isChanged) {
+            if (updated.every(p => p.collected)) {
+              triggerSuccess(() => {
+                setTutorialStep(2);
+                setPhase('EXPLAIN');
+              });
+            }
+            return updated;
+          }
+          return prevPoints;
+        });
+      }, 0);
     }
 
     if (tutorialStep === 2 && isPinching) {
-      triggerSuccess(() => {
-        setTutorialStep(3);
-        setPhase('EXPLAIN');
-      });
+      setTimeout(() => {
+        triggerSuccess(() => {
+          setTutorialStep(3);
+          setPhase('EXPLAIN');
+        });
+      }, 0);
     }
 
     if (tutorialStep === 3 && isPetting) {
-      triggerSuccess(() => {
-        setTutorialStep(4);
-        setPhase('EXPLAIN');
-      });
+      setTimeout(() => {
+        triggerSuccess(() => {
+          setTutorialStep(4);
+          setPhase('EXPLAIN');
+        });
+      }, 0);
     }
-  }, [trackingX, trackingY, tutorialStep, isTutorialActive, dataPoints, isPinching, isPetting, phase]);
-
-  const triggerSuccess = (callback: () => void) => {
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-      callback();
-    }, 1500);
-  };
+  }, [trackingX, trackingY, tutorialStep, isTutorialActive, phase, isPinching, isPetting, setTutorialStep, triggerSuccess]);
 
   if (!isTutorialActive) return null;
 

@@ -23,10 +23,13 @@ export default function BehaviorObserver() {
       // Clear idle warning
       if (idleTimeout.current) clearTimeout(idleTimeout.current);
       
+      // If the current priority dialogue is the idle message, clear it immediately upon action
+      useGameStore.getState().setPriorityDialogue(null);
+      
       idleTimeout.current = setTimeout(() => {
-        setPriorityDialogue("지루해...");
+        setPriorityDialogue("지루해... ◈");
         setTimeout(() => setPriorityDialogue(null), 3000);
-      }, 10000);
+      }, 180000); // 3 minutes
     };
 
     const handleClick = () => {
@@ -48,8 +51,8 @@ export default function BehaviorObserver() {
     window.addEventListener('mousedown', handleClick);
     window.addEventListener('mousemove', (e) => handleAction(e));
     
-    // Initial idle setup
-    handleAction();
+    // Initial idle setup removed to avoid "default" idle message
+    // handleAction();
 
     return () => {
       window.removeEventListener('mousedown', handleClick);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Trash2, CheckCircle, Clock, Search, Filter } from 'lucide-react';
+import { Mail, Trash2, CheckCircle } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -31,7 +31,7 @@ export default function MessagesPage() {
   };
 
   useEffect(() => {
-    fetchMessages();
+    setTimeout(() => fetchMessages(), 0);
   }, []);
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {

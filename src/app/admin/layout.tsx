@@ -11,9 +11,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isMounted, setIsMounted] = useState(false);
   const [clock, setClock] = useState('00:00:00');
   const [uptime, setUptime] = useState('00:00:00');
-  const startRef = useRef(Date.now());
+  const startRef = useRef<number>(0);
   useEffect(() => {
-    setIsMounted(true);
+    startRef.current = Date.now();
+    setTimeout(() => setIsMounted(true), 0);
     
     fetch('/api/analytics')
       .then(res => res.json())

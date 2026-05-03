@@ -222,7 +222,8 @@ export default function HandTrackingSystem() {
         } else {
             dirChanges.current = 0; lastWristX.current = null;
         }
-      } else {
+      } else if (results.landmarks) {
+          // 손은 감지 시도했으나 랜드마크가 없는 경우에만 리셋
           setPetting(false, 0);
       }
     }

@@ -147,9 +147,9 @@ export default function ProjectEditor() {
         const errorData = await saveRes.json();
         throw new Error(errorData.error || 'Save failed');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Save failed:', err);
-      alert(`SAVE FAILED: ${err.message}`);
+      alert(`SAVE FAILED: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
     }

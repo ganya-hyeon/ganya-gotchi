@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/useGameStore';
 
 const FOOD_POOL = [
-  { id: 'f1', emoji: '🔍', name: 'UX Research', quest: { name: '카카오 인터랙션 디자인 개선', diff: '⭐⭐⭐⭐⭐', reward: '전환율 +20%', dialogs: ['문제를 발견했다! 사용자들이 핵심 버튼에서 이탈하고 있어…', 'C4D로 마이크로 인터랙션 재설계 완료!', '결과: 전환율 20% 상승. 데이터가 증명한다!'] } },
+  { id: 'f1', emoji: '🔍', name: 'UX Research', quest: { name: 'UI 디자인 개선', diff: '⭐⭐⭐⭐⭐', reward: '전환율 +20%', dialogs: ['문제를 발견했다! 사용자들이 핵심 버튼에서 이탈하고 있어…', 'C4D로 마이크로 인터랙션 재설계 완료!', '결과: 전환율 20% 상승. 데이터가 증명한다!'] } },
   { id: 'f2', emoji: '⚙️', name: 'Motion Logic', quest: { name: 'AI 기반 대시보드 설계', diff: '⭐⭐⭐⭐', reward: '생산성 3배 향상', dialogs: ['데이터를 줘… Gemini API 연결 시작.', '실시간 데이터 시각화 시스템 완료!', '이탈율 15% 감소. 최적화 성공.'] } },
   { id: 'f3', emoji: '📊', name: 'Behavior Data', quest: { name: '3D 모션 시스템 구축', diff: '⭐⭐⭐', reward: '브랜드 몰입감 강화', dialogs: ['이건 최적화할 수 있어. R3F 파이프라인 분석 중.', '60fps 3D 인터랙션 구현 완료!', '디자인 시스템 통합 성공.'] } },
 ];
@@ -27,7 +27,7 @@ interface Food {
 
 export default function FeedingSystem() {
   const [activeFoods, setActiveFoods] = useState<Food[]>([]);
-  const { setFeedQuest, feedTrigger, setPriorityDialogue, activeTab } = useGameStore();
+  const { setFeedQuest, feedTrigger, setPriorityDialogue, activeTab, incrementFeedCount, feedCount, level } = useGameStore();
 
   useEffect(() => {
     if (activeTab !== 'FEED') {
@@ -73,7 +73,8 @@ export default function FeedingSystem() {
   useEffect(() => {
     if (feedTrigger > 0) {
       const newFoods = Array.from({ length: 3 }).map(() => spawnOne());
-      const timeout = setTimeout(() => setActiveFoods(prev => [...prev, ...newFoods]), 0);
+      // 기존 먹이를 유지하면서 추가하는 대신, 새로운 트리거 시에는 3개로 초기화/교체합니다.
+      const timeout = setTimeout(() => setActiveFoods(newFoods), 0);
 
       const timer = setTimeout(() => {
         setActiveFoods([]);
@@ -95,13 +96,22 @@ export default function FeedingSystem() {
     if (dist < 150) {
       setFeedQuest(food.quest);
       setPriorityDialogue("음 맛있다! 🐣");
+      
+      const willEvolve = (level === 1 && feedCount >= 2);
+      incrementFeedCount(); // Increment feed count and check for evolution
+      
       setTimeout(() => setPriorityDialogue(null), 2000);
       
-      // Remove eaten and spawn a new one
-      setActiveFoods(prev => [
-          ...prev.filter(f => f.key !== food.key),
-          spawnOne()
-      ]);
+      // Remove eaten food
+      const remainingFoods = activeFoods.filter(f => f.key !== food.key);
+      
+      // If evolving, clear all food for a clean transition.
+      // Otherwise, just spawn one replacement to maintain 3 foods.
+      if (willEvolve) {
+        setActiveFoods([]);
+      } else {
+        setActiveFoods([...remainingFoods, spawnOne()]);
+      }
     }
   };
 

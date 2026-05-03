@@ -24,6 +24,30 @@ export interface Project {
   thumbnail?: string;
 }
 
+interface SanityProject {
+  _id: string;
+  projectId?: string;
+  cat?: string;
+  name?: string;
+  client?: string;
+  year?: string;
+  roles?: string[];
+  status?: string;
+  size?: number;
+  desc?: {
+    background: string;
+    thinking: string;
+    challenge: string;
+  };
+  outcomes?: string[];
+  meta?: {
+    period: string;
+    team: string;
+    tool: string;
+  };
+  thumbnail?: string;
+}
+
 interface FeedQuest {
   name: string;
   diff: string;
@@ -37,6 +61,7 @@ interface GameState {
   activeQuest: Project | null;
   experience: number;
   isEvolving: boolean;
+  feedCount: number;
   
   priorityDialogue: string | null;
   activeFeedQuest: FeedQuest | null;
@@ -64,7 +89,8 @@ interface GameState {
   triggerEvolution: () => void;
   setPriorityDialogue: (message: string | null) => void;
   setFeedQuest: (quest: FeedQuest | null) => void;
-  triggerFeeding: () => void;
+  spawnFood: () => void;
+  incrementFeedCount: () => void;
   setActiveTab: (tab: 'QUEST_LOG' | 'WORK' | 'FEED' | 'MENU' | 'STATUS' | 'LOGS') => void;
   setTrackingCoords: (x: number, y: number) => void;
   setPetting: (isPetting: boolean, intensity: number) => void;
@@ -85,6 +111,7 @@ export const useGameStore = create<GameState>((set) => ({
   activeQuest: null,
   experience: 0,
   isEvolving: false,
+  feedCount: 0,
   priorityDialogue: null,
   activeFeedQuest: null,
   feedTrigger: 0,
@@ -106,20 +133,9 @@ export const useGameStore = create<GameState>((set) => ({
 
   completeProject: (id) => set((state) => {
     const updatedProjects = state.projects.map(p => p.id === id ? { ...p, status: 'done' } : p);
-    const completedCount = updatedProjects.filter(p => p.status === 'done').length;
     
-    let newLevel = state.level;
-    let shouldEvolve = false;
-
-    if (completedCount === 2 && state.level === 1) {
-      newLevel = 2;
-      shouldEvolve = true;
-    }
-
     return { 
-      projects: updatedProjects, 
-      level: newLevel,
-      isEvolving: shouldEvolve 
+      projects: updatedProjects
     };
   }),
 
@@ -131,7 +147,25 @@ export const useGameStore = create<GameState>((set) => ({
 
   setFeedQuest: (quest) => set({ activeFeedQuest: quest }),
 
-  triggerFeeding: () => set((state) => ({ feedTrigger: state.feedTrigger + 1 })),
+  spawnFood: () => set((state) => ({ feedTrigger: state.feedTrigger + 1 })),
+
+  incrementFeedCount: () => set((state) => {
+    const newFeedCount = state.feedCount + 1;
+    let newLevel = state.level;
+    let shouldEvolve = false;
+
+    // 정확히 3번 먹었을 때만 진화 체크 (Lv.1 -> Lv.2)
+    if (newFeedCount >= 3 && state.level === 1) {
+      newLevel = 2;
+      shouldEvolve = true;
+    }
+
+    return { 
+      feedCount: newFeedCount,
+      level: newLevel,
+      isEvolving: shouldEvolve
+    };
+  }),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -165,7 +199,7 @@ export const useGameStore = create<GameState>((set) => ({
         throw new Error('Invalid data received from Sanity');
       }
 
-      const mappedProjects: Project[] = data.map((p: any) => ({
+      const mappedProjects: Project[] = data.map((p: SanityProject) => ({
         id: p.projectId || p._id,
         cat: p.cat || 'ux',
         name: p.name || 'Untitled',

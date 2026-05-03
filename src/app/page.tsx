@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const { level, isEvolving, triggerEvolution, trackingX, trackingY, activeTab, setPriorityDialogue, fetchProjects } = useGameStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [evoStage, setEvoStage] = useState<'AWAKEN' | 'DETECT' | 'CONNECT' | 'IDLE'>('IDLE');
 
   // Check if hand tracking is active
   const isTrackingActive = trackingX !== 0 || trackingY !== 0;
@@ -34,10 +35,18 @@ export default function Home() {
 
   useEffect(() => {
     if (isEvolving) {
-      const timer = setTimeout(() => {
+      setTimeout(() => setEvoStage('AWAKEN'), 0);
+      const t1 = setTimeout(() => setEvoStage('DETECT'), 1000);
+      const t2 = setTimeout(() => setEvoStage('CONNECT'), 2000);
+      const t3 = setTimeout(() => {
+        setEvoStage('IDLE');
         triggerEvolution();
       }, 3000);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
     }
   }, [isEvolving, triggerEvolution]);
 
@@ -92,37 +101,15 @@ export default function Home() {
                         exit={{ opacity: 0, scale: 1.1 }}
                         className="relative z-10 flex flex-col items-center gap-12"
                     >
-                      {/* Evolution Overlay */}
-                      <AnimatePresence>
-                        {isEvolving && (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center mix-blend-difference pointer-events-none"
-                          >
-                            <motion.h1 
-                              initial={{ scale: 0.5, opacity: 0 }}
-                              animate={{ scale: [1, 1.2, 1], opacity: 1 }}
-                              className="text-white font-mono text-6xl font-bold tracking-[0.5em] text-center"
-                            >
-                              EVOLUTION<br/>DETECTED
-                            </motion.h1>
-                            <motion.div 
-                              className="mt-8 w-64 h-1 bg-white"
-                              initial={{ width: 0 }}
-                              animate={{ width: 256 }}
-                              transition={{ duration: 2.5 }}
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      {/* Evolution Overlay Removed for Static Feeling */}
 
                       {/* Central Character (Ganya) Container */}
                       <motion.div 
                         className="relative"
-                        animate={isEvolving ? { scale: [1, 1.5, 0.8, 1], filter: ["blur(0px)", "blur(20px)", "blur(0px)"] } : {}}
-                        transition={{ duration: 3 }}
+                        animate={isEvolving ? { 
+                          y: [0, -40, 0],
+                        } : {}}
+                        transition={{ duration: 3, ease: "easeInOut" }}
                       >
                         <motion.div
                           animate={{ 
@@ -142,12 +129,12 @@ export default function Home() {
                           style={{ transform: 'translateZ(0)' }}
                         >
                           {/* The Animated Pixel Character */}
-                          <PixelCharacter level={level} />
+                          <PixelCharacter />
                         </motion.div>
 
                         <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
                           <div className="text-primary font-mono text-[14px] opacity-50 uppercase tracking-widest">LV.{level}</div>
-                          <div className="text-primary font-mono text-[16px] font-bold">{level === 1 ? 'INIT_GANYA' : 'EVOLVED_CORE'}</div>
+                          <div className="text-primary font-mono text-[16px] font-bold">{level === 1 ? 'STARTER' : 'EXPLORER'}</div>
                         </div>
                       </motion.div>
 

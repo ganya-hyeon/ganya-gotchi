@@ -35,15 +35,12 @@ export async function POST(request: Request) {
     console.log('Message created successfully:', result._id);
     
     return NextResponse.json({ success: true, message: result });
-  } catch (error: any) {
+  } catch (error) {
     console.error('CRITICAL: Failed to save message to Sanity:', error);
-    // Log more details if available
-    if (error.response) {
-      console.error('Sanity Error Response:', error.response.body);
-    }
+    const err = error as { message?: string, response?: { body?: unknown } };
     return NextResponse.json({ 
-      error: error.message || 'Failed to save message',
-      details: error.response?.body || undefined
+      error: err.message || 'Failed to save message',
+      details: err.response?.body || undefined
     }, { status: 500 });
   }
 }

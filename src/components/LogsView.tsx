@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Award, Briefcase, Zap, Star, ChevronRight, X } from 'lucide-react';
+import { Terminal, Award, Briefcase, Zap, Star, ChevronRight } from 'lucide-react';
 import { useGameStore } from '@/store/useGameStore';
 
 const CHAPTERS = [
   { id: 'all', year: 'ALL', label: '전체 기록', lv: 'LV.4', lvName: 'EVOLVING', exp: 960 },
-  { id: 'c1', year: '2021', label: '시작', lv: 'LV.1', lvName: 'INIT_GANYA', exp: 120 },
-  { id: 'c2', year: '2022', label: '탐색', lv: 'LV.2', lvName: 'EXPLORING', exp: 280 },
-  { id: 'c3', year: '2023', label: '성장', lv: 'LV.3', lvName: 'GROWING', exp: 520 },
-  { id: 'c4', year: '2024', label: '확장', lv: 'LV.4', lvName: 'EXPANDING', exp: 820 },
   { id: 'c5', year: '2025', label: '현재', lv: 'LV.4', lvName: 'EVOLVING', exp: 960 },
+  { id: 'c4', year: '2024', label: '확장', lv: 'LV.4', lvName: 'EXPANDING', exp: 820 },
+  { id: 'c3', year: '2023', label: '성장', lv: 'LV.3', lvName: 'GROWING', exp: 520 },
+  { id: 'c2', year: '2022', label: '탐색', lv: 'LV.2', lvName: 'EXPLORING', exp: 280 },
+  { id: 'c1', year: '2021', label: '시작', lv: 'LV.1', lvName: 'INIT_GANYA', exp: 120 },
 ];
 
 const LOG_ENTRIES = [
@@ -30,7 +30,7 @@ const LOG_ENTRIES = [
   { id: 'l13', chapter: 'c3', date: '2023.09', type: 'project', text: '이커머스 앱 전체 UX 플로우 리디자인. 처음으로 리드 디자이너 역할.', tags: ['ux'], exp: 60, stats: { ux: 30 } },
   { id: 'l14', chapter: 'c3', date: '2023.11', type: 'skill', text: '사용성 테스트, FullStory, Maze 등 리서치 툴 본격 도입.', tags: ['skill', 'ux'], exp: 35, stats: { ux: 15 } },
   { id: 'l15', chapter: 'c4', date: '2024.02', type: 'project', text: '제품 3D 비주얼라이징 프로젝트. 실사급 머티리얼 구현에 처음으로 성공.', tags: ['3d'], exp: 50, stats: { '3d': 35 } },
-  { id: 'l16', chapter: 'c4', date: '2024.04', type: 'quest', text: '카카오 인터랙션 개선 프로젝트. C4D 마이크로 인터랙션으로 차별화. 재계약 성사.', tags: ['ux', 'motion'], exp: 70, stats: { ux: 35, motion: 20 } },
+  { id: 'l16', chapter: 'c4', date: '2024.04', type: 'quest', text: 'UI 디자인 개선 프로젝트. C4D 마이크로 인터랙션으로 차별화. 재계약 성사.', tags: ['ux', 'motion'], exp: 70, stats: { ux: 35, motion: 20 } },
   { id: 'l17', chapter: 'c4', date: '2024.06', type: 'project', text: '핀테크 앱 온보딩 리디자인. 이탈 구간 분석 → UX 개선안 내부 표준 채택.', tags: ['ux'], exp: 65, stats: { ux: 30 } },
   { id: 'l18', chapter: 'c4', date: '2024.08', type: 'quest', text: 'AI 어드민 대시보드 설계. 처음으로 AI+데이터 UX 영역 진입.', tags: ['ux', 'skill'], exp: 60, stats: { ux: 25, ai: 30 } },
   { id: 'l19', chapter: 'c4', date: '2024.09', type: 'project', text: '디자인 시스템 구축 착수. 토큰 체계 수립, Figma-Storybook 브릿지 설계.', tags: ['ux', 'skill'], exp: 55, stats: { ux: 25 } },
@@ -92,11 +92,6 @@ export default function LogsView() {
 
   const maxStatValue = Math.max(...Object.values(totalStats).filter(v => typeof v === 'number') as number[]);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [activeChapter, filter]);
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d');
@@ -114,11 +109,13 @@ export default function LogsView() {
     }));
   }, []);
 
-  const filteredLogs = LOG_ENTRIES.filter(log => {
-    const chMatch = activeChapter === 'all' || log.chapter === activeChapter;
-    const typeMatch = filter === 'all' || log.type === filter;
-    return chMatch && typeMatch;
-  });
+  const filteredLogs = LOG_ENTRIES
+    .filter(log => {
+      const chMatch = activeChapter === 'all' || log.chapter === activeChapter;
+      const typeMatch = filter === 'all' || log.type === filter;
+      return chMatch && typeMatch;
+    })
+    .sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <motion.div 
@@ -154,13 +151,13 @@ export default function LogsView() {
       {/* Center: Terminal Log */}
       <div className="flex-1 min-h-[400px] lg:min-h-0 flex flex-col hud-glass rounded-2xl overflow-hidden pointer-events-auto border-primary/10 order-2 lg:order-none relative">
         <button 
-          onClick={() => setActiveTab('MENU')} 
-          className="absolute top-4 right-4 lg:top-6 lg:right-6 text-primary/50 hover:text-primary hover:bg-primary/10 p-1.5 rounded-md transition-all z-10"
+          onClick={() => setActiveTab('MENU')}
+          className="absolute top-4 right-4 lg:top-6 lg:right-6 w-10 h-10 rounded-lg flex items-center justify-center border border-primary/20 text-primary/60 hover:text-primary hover:border-primary transition-all z-10"
         >
-          <X size={20} />
+          ✕
         </button>
 
-        <div className="p-4 lg:p-6 border-b border-primary/10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div className="p-4 lg:p-6 border-b border-primary/10 flex flex-col gap-4">
           <div className="pr-10">
             <h2 className="text-primary font-mono text-xs lg:text-sm font-black tracking-[0.2em] uppercase">
               {activeChapter === 'all' ? 'SYSTEM_TOTAL_LOGS' : `CHAPTER_${activeChapter.toUpperCase()}_LOGS`}
@@ -169,7 +166,8 @@ export default function LogsView() {
               {activeChapter === 'all' ? '전체 성장 기록 분석' : `${activeChapter.slice(1)}단계 성장 가속 기록`}
             </p>
           </div>
-          <div className="flex gap-1 lg:gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
+          
+          <div className="flex gap-1 lg:gap-2 overflow-x-auto w-full pb-1 scrollbar-hide">
             {['all', 'quest', 'skill', 'project'].map((f) => (
               <button
                 key={f}

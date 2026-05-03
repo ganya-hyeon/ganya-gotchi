@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Terminal, Battery, Wifi, Menu, Activity, User, Book, Briefcase, Heart, Rocket } from 'lucide-react';
+import { Terminal, Battery, Wifi, Activity, Book, Briefcase, Heart } from 'lucide-react';
 import { useGameStore } from '@/store/useGameStore';
 
 export default function HUD() {
@@ -30,7 +30,7 @@ export default function HUD() {
     return () => clearInterval(interval);
   }, []);
 
-  const { activeTab, setActiveTab, triggerFeeding, setFeedQuest, setTutorialActive, setTutorialStep } = useGameStore();
+  const { activeTab, setActiveTab, spawnFood, setFeedQuest } = useGameStore();
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50 p-3 md:p-6 flex flex-col justify-between">
@@ -42,14 +42,26 @@ export default function HUD() {
           className="hud-glass p-2 md:p-4 rounded-xl flex items-center gap-3 md:gap-6 pointer-events-auto shrink min-w-0"
         >
           <div className="flex items-center gap-2 md:gap-4 overflow-hidden">
-            <div className="w-8 h-8 md:w-12 md:h-12 bg-primary/20 rounded-lg flex items-center justify-center border border-primary/40 shadow-[0_0_10px_var(--primary-glow)] shrink-0">
-              <User className="text-primary w-5 h-5 md:w-7 md:h-7" />
+            {/* profile.svg design icon */}
+            <div className="w-8 h-8 md:w-12 md:h-12 shrink-0 overflow-hidden rounded-lg border border-primary/40 shadow-[0_0_10px_var(--primary-glow)]">
+              <svg width="100%" height="100%" viewBox="0 0 249 249" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <rect width="249" height="249" fill="#00FFB2" fillOpacity={0.4}/>
+                <rect x="133" y="119" width="19" height="19" fill="#00FFB2"/>
+                <rect x="133" y="140" width="19" height="19" fill="#00FFB2"/>
+                <rect x="114" y="119" width="19" height="19" fill="#00FFB2"/>
+                <rect x="114" y="140" width="19" height="19" fill="#00FFB2"/>
+                <rect x="95" y="119" width="19" height="19" fill="#00FFB2"/>
+                <rect x="95" y="140" width="19" height="19" fill="#00FFB2"/>
+                <rect x="76" y="89" width="19" height="19" fill="#00FFB2"/>
+                <rect x="154" y="90" width="19" height="19" fill="#00FFB2"/>
+              </svg>
             </div>
+            
             <div className="flex flex-col min-w-0">
-              <div className="text-[8px] md:text-[10px] text-primary/60 font-bold uppercase tracking-widest leading-tight truncate">Subject_Profile</div>
+              <div className="text-[8px] md:text-[10px] text-primary/60 font-bold uppercase tracking-widest leading-tight truncate">Profile</div>
               <div className="text-primary font-mono text-sm md:text-[22px] font-bold leading-tight">Ganya</div>
               <div className="text-[9px] md:text-[11px] text-primary/80 font-mono tracking-[0.15em] uppercase leading-tight mt-0.5 truncate">
-                Product Designer · 3Y · Seoul
+                UIUX Designer
               </div>
               <div className="mt-1 hidden sm:flex flex-wrap gap-1">
                 {['호기심 많음', '데이터 집착형', '성장 지향적'].map((trait, idx) => (
@@ -165,7 +177,7 @@ export default function HUD() {
             active={activeTab === 'FEED'} 
             onClick={() => {
                 setActiveTab('FEED');
-                triggerFeeding();
+                spawnFood();
                 setFeedQuest(null);
             }}
           />

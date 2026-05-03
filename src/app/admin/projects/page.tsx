@@ -23,21 +23,23 @@ export default function ProjectManagement() {
       .then((data: Project[]) => {
         if (!Array.isArray(data)) {
           console.error('Data is not an array:', data);
-          setProjects([]);
+          setTimeout(() => setProjects([]), 0);
           return;
         }
-        setProjects(data.map((p: Project) => ({
-            id: p.id,
-            name: p.name,
-            cat: p.cat,
-            status: p.status,
-            year: p.year,
-            thumbnail: p.thumbnail || ''
-        })));
+        setTimeout(() => {
+          setProjects(data.map((p: Project) => ({
+              id: p.id,
+              name: p.name,
+              cat: p.cat,
+              status: p.status,
+              year: p.year,
+              thumbnail: p.thumbnail || ''
+          })));
+        }, 0);
       })
       .catch(() => {
         console.error('Failed to load projects');
-        setProjects([]);
+        setTimeout(() => setProjects([]), 0);
       });
   }, []);
 
