@@ -17,6 +17,8 @@ export default function LoginPage() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const [isBooting, setIsBooting] = useState(false);
+  const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     if (step < LOGS.length) {
@@ -30,10 +32,24 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsBooting(true);
-    setTimeout(() => {
-      router.push('/admin');
-    }, 1500);
+    setError('');
+    
+    // 비밀번호 검증 (사용자 요청: ganya / rksi2ek!@)
+    if (id === 'ganya' && pw === 'rksi2ek!@') {
+      setIsBooting(true);
+      setIsSuccess(true);
+      
+      // 쿠키 설정 (미들웨어용)
+      document.cookie = "admin_auth=true; path=/; max-age=86400"; // 24시간
+      
+      setTimeout(() => {
+        router.push('/admin');
+      }, 1500);
+    } else {
+      setError('ACCESS_DENIED: UNAUTHORIZED_OPERATOR');
+      // 틀렸을 때 초기화할지 유지할지는 선택인데, 보안상 초기화가 좋습니다.
+      setPw('');
+    }
   };
 
   return (
@@ -94,11 +110,13 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-8 min-h-[60px] text-[8px] tracking-widest text-[#00FF41]/30 leading-relaxed uppercase">
+        <div className="mt-8 min-h-[60px] text-[8px] tracking-widest leading-relaxed uppercase">
           {bootLogs.map((log, i) => (
-            <div key={i}>&gt; {log}</div>
+            <div key={i} className="text-[#00FF41]/30">&gt; {log}</div>
           ))}
-          {isBooting && <div className="animate-pulse">ESTABLISHING_SECURE_LINK...</div>}
+          {isBooting && <div className="animate-pulse text-[#00FF41]">ESTABLISHING_SECURE_LINK...</div>}
+          {isSuccess && <div className="text-[#00FF41] mt-1">SUCCESS: ACCESS_GRANTED. REDIRECTING...</div>}
+          {error && <div className="text-red-500 mt-2 bg-red-500/10 p-2 border border-red-500/20 animate-bounce">{error}</div>}
         </div>
       </motion.div>
     </main>
