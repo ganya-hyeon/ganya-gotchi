@@ -88,6 +88,7 @@ export default function HandTrackingSystem() {
   const lastWaveTime = useRef(0);
   const lastPetX = useRef<number | null>(null);
   const lastPetTime = useRef<number>(0);
+  const lastActivePetTime = useRef<number>(0); // 쓰다듬기 상태 유지를 위한 전용 변수
   const lastClickTime = useRef(0);
   const isPinchingRef = useRef(false);
 
@@ -200,10 +201,10 @@ export default function HandTrackingSystem() {
                     lastPetTime.current = nowTime;
                 }
                 // 실시간 쓰다듬기 상태 업데이트 시간 기록 (깜빡임 방지용)
-                lastClickTime.current = nowTime; 
+                lastActivePetTime.current = nowTime; 
             } else {
                 // 움직임이 멈춰도 300ms 동안은 쓰다듬기 상태 유지
-                if (Date.now() - lastClickTime.current > 300) {
+                if (Date.now() - lastActivePetTime.current > 300) {
                     setPetting(false, 0);
                 }
             }
